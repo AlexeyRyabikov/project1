@@ -1,11 +1,11 @@
-import React from 'react';
-import ReactDOM from 'react';
+// import React from 'react';
+// import ReactDOM from 'react';
 import './task.css';
 import { formatDistanceToNow } from 'date-fns';
 
 function Task(dataobj) {
-  const { props, toggleDone, edit } = dataobj;
-  const { className, done, ID, description, creationDate, submitChange, destroy, setName } = props;
+  const { props } = dataobj;
+  const { className, done, ID, description, creationDate } = props;
   console.log('залупа-2');
   let completedClassText;
   if (done) {
@@ -27,10 +27,7 @@ function Task(dataobj) {
         />
         <label>
           <span className="description">{description}</span>
-          <span className="created ">
-            `created
-            {formatDistanceToNow(creationDate)} ago`
-          </span>
+          <span className="created">`created {formatDistanceToNow(creationDate)} ago`</span>
         </label>
         <button
           type="button"

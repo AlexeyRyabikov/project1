@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
-import ReactDOM from 'react';
+import { Component } from 'react';
+// import ReactDOM from 'react';
 import './tasklist.css';
-import { id } from 'date-fns/locale';
+// import { id } from 'date-fns/locale';
 
 import Task from '../task/task';
 
 class Tasklist extends Component {
   static propTypes = {
-    propers: (props, propName, component) => {
+    propers: (props, propName) => {
       const value = typeof props[propName];
       if (value === 'object') {
         return null;

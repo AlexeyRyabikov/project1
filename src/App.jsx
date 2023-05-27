@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+// import ReactDOM from 'react-dom/client';
 
 import Tasklist from './tasklist/tasklist';
 
@@ -23,7 +23,6 @@ const createItem = function (descr, done = false) {
   };
   return objlist;
 };
-let m;
 class Finalcode extends React.Component {
   constructor() {
     super();
@@ -38,9 +37,9 @@ class Finalcode extends React.Component {
     this.setState(({ listOfItems }) => {
       const fuck = listOfItems.map((item) => {
         if (!item.done) {
-          item.visible = false;
-        } else {
           item.visible = true;
+        } else {
+          item.visible = false;
         }
         return item;
       });
@@ -48,7 +47,7 @@ class Finalcode extends React.Component {
     });
   };
 
-  deleteDone = (e) => {
+  deleteDone = () => {
     this.setState(({ listOfItems }) => {
       const fuck = listOfItems.filter((item) => !item.done);
       console.log(fuck);
@@ -56,13 +55,13 @@ class Finalcode extends React.Component {
     });
   };
 
-  selectActive = (e) => {
+  selectActive = () => {
     this.setState(({ listOfItems }) => {
       const fuck = listOfItems.map((item) => {
         if (item.done) {
-          item.visible = false;
-        } else {
           item.visible = true;
+        } else {
+          item.visible = false;
         }
         return item;
       });
@@ -70,7 +69,7 @@ class Finalcode extends React.Component {
     });
   };
 
-  selectAll = (e) => {
+  selectAll = () => {
     this.setState(({ listOfItems }) => {
       const fuck = listOfItems.map((item) => {
         item.visible = true;
@@ -91,7 +90,7 @@ class Finalcode extends React.Component {
   };
 
   changeItem = (e) => {
-    this.setState((state) => {
+    this.setState(() => {
       const newVal = e.target.value;
       return { textInput: newVal };
     });

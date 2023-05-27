@@ -25,7 +25,7 @@
     "format": "prettier ./src --write",
     "prettier": "npx prettier src test --check",
     "prettier:fix": "npm run prettier src -- --write",
-    "prepare": "cd .. && husky install project1/.husky"
+    "prepare": "husky install"
   },
   "eslintConfig": {
     "extends": [
@@ -73,8 +73,7 @@
   },
   "lint-staged": {
     "*.jsx": [
-      "npm run lint:fix",
-      "git add"
+      "npm run lint:fix"
     ]
   }
 }
