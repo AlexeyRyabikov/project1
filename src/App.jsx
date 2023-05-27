@@ -3,16 +3,14 @@ import React from 'react';
 
 import Tasklist from './tasklist/tasklist';
 
-console.log(Tasklist);
 const IDobj = {
   actualnum: 0,
   getfunc() {
     this.actualnum += 1;
-    console.log(this.actualnum);
     return this.actualnum;
   },
 };
-const createItem = function (descr, done = false) {
+function createItem(descr, done = false) {
   const objlist = {
     className: '',
     description: descr,
@@ -22,7 +20,7 @@ const createItem = function (descr, done = false) {
     creationDate: new Date(),
   };
   return objlist;
-};
+}
 class Finalcode extends React.Component {
   constructor() {
     super();
@@ -50,7 +48,6 @@ class Finalcode extends React.Component {
   deleteDone = () => {
     this.setState(({ listOfItems }) => {
       const fuck = listOfItems.filter((item) => !item.done);
-      console.log(fuck);
       return { listOfItems: fuck };
     });
   };
@@ -118,10 +115,7 @@ class Finalcode extends React.Component {
         </header>
         <section className="main">
           <Tasklist
-            edit={(i) => {
-              console.log(listOfItems[i], 'работает ');
-              return this.setState(({ listOfItems }) => (listOfItems[i].className = 'editing'));
-            }}
+            edit={(i) => this.setState(({ listOfItems }) => (listOfItems[i].className = 'editing'))}
             destroy={(i) => {
               this.setState(({ listOfItems }) => {
                 const newList = [...listOfItems.slice(0, i), ...listOfItems.slice(i + 1)];
@@ -134,14 +128,12 @@ class Finalcode extends React.Component {
             propers={listOfItems}
             setName={(e, i) => {
               this.setState(({ listOfItems }) => {
-                console.log('Хуй');
-                return (listOfItems[i].description = e.target.value);
+                listOfItems[i].description = e.target.value;
               });
             }}
             submitChange={(i) => {
               this.setState(({ listOfItems }) => {
-                console.log('Хуй2');
-                return (listOfItems[i].className = '');
+                listOfItems[i].className = '';
               });
             }}
           />

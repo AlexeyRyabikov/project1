@@ -6,7 +6,6 @@ import { formatDistanceToNow } from 'date-fns';
 function Task(dataobj) {
   const { props } = dataobj;
   const { className, done, ID, description, creationDate } = props;
-  console.log('залупа-2');
   let completedClassText;
   if (done) {
     completedClassText = `${className} completed`;

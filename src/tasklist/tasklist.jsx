@@ -23,9 +23,6 @@ class Tasklist extends Component {
   render() {
     const { props } = this;
     const { propers } = props;
-    console.log(props);
-    console.log(propers);
-    console.log('залупа-3');
     const mass = [];
     for (let i = 0; i < propers.length; i += 1) {
       // this.props.propers.length
