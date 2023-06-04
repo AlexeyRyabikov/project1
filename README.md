@@ -1,1 +1,1 @@
-https://project1-f62tpb3hf-alexeyryabikov.vercel.app/
+https://project1-2oz5mmhw9-alexeyryabikov.vercel.app/
