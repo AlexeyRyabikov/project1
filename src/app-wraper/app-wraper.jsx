@@ -10,14 +10,16 @@ const IDobj = {
     return this.actualnum;
   },
 };
-function createItem(descr, done = false) {
+function createItem(descr, done = false, min = 0, sec = 0) {
   const objlist = {
+    time: min * 60 + Number(sec),
     className: '',
     description: descr,
     done,
     visible: true,
     ID: IDobj.getfunc(),
     creationDate: new Date(),
+    timerID: null,
   };
   return objlist;
 }
@@ -27,6 +29,8 @@ class Finalcode extends React.Component {
     this.state = {
       listOfItems: [createItem('task1'), createItem('task2'), createItem('task3')],
       textInput: '',
+      minutes: '',
+      seconds: '',
     };
   }
 
@@ -44,7 +48,24 @@ class Finalcode extends React.Component {
       return { listOfItems: fuck };
     });
   };
+  // TimerStart() {
+  //   if (this.state.timerID == null) {
+  //     this.state.timerID = setInterval(() => {
+  //       if (this.state.timerTime > 0) {
+  //         this.setState(({ timerTime }) => {
+  //           return { timerTime: timerTime - 1 };
+  //         });
+  //       } else {
+  //         clearInterval(this.state.timerID);
+  //       }
+  //     }, 1000);
+  //   }
+  // }
 
+  // TimerStop() {
+  //   clearInterval(this.state.timerID);
+  //   this.setState(() => ({ timerID: null }));
+  // }
   deleteDone = () => {
     this.setState(({ listOfItems }) => {
       const fuck = listOfItems.filter((item) => !item.done);
@@ -79,12 +100,12 @@ class Finalcode extends React.Component {
   submitCreateItem = (e) => {
     e.preventDefault();
     if (this.state.textInput) {
-      this.setState(({ textInput, listOfItems }) => {
-        const needArr = [...listOfItems.slice(0), createItem(textInput)];
+      this.setState(({ textInput, listOfItems, minutes, seconds }) => {
+        const needArr = [...listOfItems.slice(0), createItem(textInput, false, minutes, seconds)]; // false, minutes, seconds
         // console.log(needArr)
         return { listOfItems: needArr };
       });
-      this.setState(() => ({ textInput: '' }));
+      this.setState(() => ({ textInput: '', minutes: '', seconds: '' }));
     }
   };
 
@@ -95,7 +116,43 @@ class Finalcode extends React.Component {
     });
   };
 
+  setMinutes = (e) => {
+    this.setState(() => {
+      const newVal = e.target.value;
+      return { minutes: newVal };
+    });
+  };
+
+  setSeconds = (e) => {
+    this.setState(() => {
+      const newVal = e.target.value;
+      return { seconds: newVal };
+    });
+  };
+
   countItemsDone = () => this.state.listOfItems.filter((it) => !it.done).length;
+
+  TimerStart(i) {
+    if (this.state.listOfItems[i].timerID == null) {
+      this.state.listOfItems[i].timerID = setInterval(() => {
+        if (this.state.listOfItems[i].time > 0) {
+          this.setState(({ listOfItems }) => {
+            listOfItems[i].time -= 1;
+            return { listOfItems };
+          });
+        } else {
+          clearInterval(this.state.listOfItems[i].timerID);
+        }
+      }, 1000);
+    }
+  }
+
+  TimerStop(i) {
+    clearInterval(this.state.listOfItems[i].timerID);
+    this.setState(({ listOfItems }) => {
+      listOfItems[i].timerID = null;
+    });
+  }
 
   render() {
     // (e)=>{this.setState(({listOfItems})=>{e.preventDefault()
@@ -107,14 +164,30 @@ class Finalcode extends React.Component {
       <section className="todoapp">
         <header className="header">
           <h1>todos</h1>
-          <form onSubmit={this.submitCreateItem}>
+          <form type="submit" onSubmit={this.submitCreateItem} className="new-todo-form">
             <input
+              // name="text"
               onChange={this.changeItem}
               value={state.textInput}
               className="new-todo"
               placeholder="What needs to be done?"
               // autoFocus
             />
+            <input
+              name="minutes"
+              onChange={this.setMinutes}
+              value={state.minutes}
+              className="new-todo-form__timer"
+              placeholder="Min"
+            />
+            <input
+              name="seconds"
+              onChange={this.setSeconds}
+              value={state.seconds}
+              className="new-todo-form__timer"
+              placeholder="Sec"
+            />
+            <input type="submit" style={{ display: 'none' }} />
           </form>
         </header>
         <section className="main">
@@ -140,6 +213,12 @@ class Finalcode extends React.Component {
                 listOfItems[i].className = '';
                 return listOfItems;
               });
+            }}
+            TimerStart={(i) => {
+              this.TimerStart(i);
+            }}
+            TimerStop={(i) => {
+              this.TimerStop(i);
             }}
           />
           <footer className="footer">

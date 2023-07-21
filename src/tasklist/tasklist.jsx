@@ -20,6 +20,10 @@ class Tasklist extends Component {
     propers: [],
   };
 
+  componentDidUpdate(prevProps) {
+    console.log('метод работает');
+  }
+
   render() {
     const { props } = this;
     const { propers } = props;
@@ -47,6 +51,13 @@ class Tasklist extends Component {
               props.setName(e, i);
             }}
             key={props.propers[i].ID}
+            TimerStart={() => {
+              props.TimerStart(i);
+            }}
+            TimerStop={() => {
+              props.TimerStop(i);
+            }}
+            time={props.propers[i].time}
           />
         );
       } // ()=>console.log('сработало')this.checked}

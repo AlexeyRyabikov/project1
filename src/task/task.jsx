@@ -6,26 +6,19 @@ import { formatDistanceToNow, format, parse } from 'date-fns';
 class Task extends Component {
   constructor() {
     super();
-    this.state = { timerTime: 600, timerID: null };
+    this.state = { TaskName: '' }; // timerID: null,
     let timer;
   }
 
-  TimerStart() {
-    if (this.state.timerID == null) {
-      this.state.timerID = setInterval(() => {
-        if (this.state.timerTime > 0) {
-          this.setState(({ timerTime }) => ({ timerTime: timerTime - 1 }));
-        } else {
-          clearInterval(this.state.timerID);
-        }
-      }, 1000);
-    }
+  componentDidMount() {
+    const { description } = this.props.props;
+    this.setState({ TaskName: description });
   }
 
-  TimerStop() {
-    clearInterval(this.state.timerID);
-    this.setState(() => ({ timerID: null }));
-  }
+  // TimerStop() {
+  //   clearInterval(this.state.timerID);
+  //   this.setState(() => ({ timerID: null }));
+  // }
 
   render() {
     const { className, done, ID, description, creationDate } = this.props.props;
@@ -48,11 +41,13 @@ class Task extends Component {
             }}
           />
           <label>
-            <span className="title">{description}</span>
+            <span className="title">{this.state.TaskName}</span>
             <span className="description">
-              <button type="button" onClick={this.TimerStart.bind(this)} className="icon icon-play" />
-              <button type="button" onClick={this.TimerStop.bind(this)} className="icon icon-pause" />
-              <span>{`  ${Math.floor(this.state.timerTime / 60)}:${this.state.timerTime % 60}`}</span>
+              {/* this.TimerStart.bind(this) */}
+              {/* onClick={this.TimerStop.bind(this)} */}
+              <button type="button" onClick={this.props.TimerStart} className="icon icon-play" />
+              <button type="button" onClick={this.props.TimerStop} className="icon icon-pause" />
+              <span>{`  ${Math.floor(this.props.time / 60)}:${this.props.time % 60}`}</span>
             </span>
             <span className="description">`created {formatDistanceToNow(creationDate)} ago`</span>
           </label>
@@ -77,7 +72,12 @@ class Task extends Component {
             this.props.submitChange();
           }}
         >
-          <input type="text" className="edit" onChange={(e) => this.props.setName(e)} />
+          <input
+            type="text"
+            className="edit"
+            value={this.state.TaskName}
+            onChange={(e) => this.setState({ TaskName: e.target.value })}
+          />
         </form>
       </li>
     );
