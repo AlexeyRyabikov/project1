@@ -20,10 +20,6 @@ class Tasklist extends Component {
     propers: [],
   };
 
-  componentDidUpdate(prevProps) {
-    console.log('метод работает');
-  }
-
   render() {
     const { props } = this;
     const { propers } = props;
@@ -66,12 +62,4 @@ class Tasklist extends Component {
   }
 }
 
-// const Tasklist = (dataobj) => {
-//   console.log('залупа-3');
-//   const mass = [];
-//   for (let i = 0; i < Object.keys(dataobj.props).length; i++) {
-//     mass[i] = <Task props={dataobj.props[i]} />;
-//   }
-//   return <ul className="todo-list">{mass}</ul>;
-// };
 export default Tasklist;

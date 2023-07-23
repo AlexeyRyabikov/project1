@@ -34,6 +34,25 @@ class Finalcode extends React.Component {
     };
   }
 
+  componentDidMount() {
+    document.addEventListener('click', (e) => {
+      let mousedInput = false;
+      if (e.target.name) {
+        if (e.target.name.includes('input')) {
+          mousedInput = true;
+        }
+      }
+      if (!mousedInput) {
+        this.setState(() => ({ textInput: '', minutes: '', seconds: '' }));
+      }
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Escape') {
+        this.setState(() => ({ textInput: '', minutes: '', seconds: '' }));
+      }
+    });
+  }
+
   selectDone = (e) => {
     e.preventDefault();
     this.setState(({ listOfItems }) => {
@@ -147,6 +166,11 @@ class Finalcode extends React.Component {
     }
   }
 
+  // keyDown(e) {
+  //   console.log(this.state.seconds);
+  //   console.log(e.relatedtarget);
+  // }
+
   TimerStop(i) {
     clearInterval(this.state.listOfItems[i].timerID);
     this.setState(({ listOfItems }) => {
@@ -166,28 +190,29 @@ class Finalcode extends React.Component {
           <h1>todos</h1>
           <form type="submit" onSubmit={this.submitCreateItem} className="new-todo-form">
             <input
-              // name="text"
               onChange={this.changeItem}
               value={state.textInput}
+              name="inputName"
               className="new-todo"
               placeholder="What needs to be done?"
-              // autoFocus
             />
             <input
-              name="minutes"
+              name="inputMinutes"
               onChange={this.setMinutes}
               value={state.minutes}
               className="new-todo-form__timer"
               placeholder="Min"
+              type="number"
             />
             <input
-              name="seconds"
+              name="inputSeconds"
               onChange={this.setSeconds}
               value={state.seconds}
               className="new-todo-form__timer"
               placeholder="Sec"
+              type="number"
             />
-            <input type="submit" style={{ display: 'none' }} />
+            <input type="submit" name="inputButton" style={{ display: 'none' }} />
           </form>
         </header>
         <section className="main">

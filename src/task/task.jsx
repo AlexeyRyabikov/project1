@@ -15,11 +15,6 @@ class Task extends Component {
     this.setState({ TaskName: description });
   }
 
-  // TimerStop() {
-  //   clearInterval(this.state.timerID);
-  //   this.setState(() => ({ timerID: null }));
-  // }
-
   render() {
     const { className, done, ID, description, creationDate } = this.props.props;
     let completedClassText;
