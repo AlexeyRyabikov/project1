@@ -1,81 +1,63 @@
-import { Component } from 'react';
+import { Component, useEffect, useState } from 'react';
 // import ReactDOM from 'react';
 import './task.css';
 import { formatDistanceToNow, format, parse } from 'date-fns';
 
-class Task extends Component {
-  constructor() {
-    super();
-    this.state = { TaskName: '' }; // timerID: null,
-    let timer;
+function Task({ props, toggleDone, TimerStart, TimerStop, destroy, edit, submitChange }) {
+  const { className, done, ID, description, creationDate } = props;
+  const [TaskName, setTaskName] = useState(description);
+  let timer;
+  let completedClassText;
+  if (done) {
+    completedClassText = `${className} completed`;
+  } else {
+    completedClassText = className;
   }
-
-  componentDidMount() {
-    const { description } = this.props.props;
-    this.setState({ TaskName: description });
-  }
-
-  render() {
-    const { className, done, ID, description, creationDate } = this.props.props;
-    let completedClassText;
-    if (done) {
-      completedClassText = `${className} completed`;
-    } else {
-      completedClassText = className;
-    }
-    return (
-      <li id={ID} className={completedClassText}>
-        <div className="view">
-          {/* checked={false}  */}
-          <input
-            checked={done}
-            className="toggle"
-            type="checkbox"
-            onChange={() => {
-              this.props.toggleDone();
-            }}
-          />
-          <label>
-            <span className="title">{this.state.TaskName}</span>
-            <span className="description">
-              {/* this.TimerStart.bind(this) */}
-              {/* onClick={this.TimerStop.bind(this)} */}
-              <button type="button" onClick={this.props.TimerStart} className="icon icon-play" />
-              <button type="button" onClick={this.props.TimerStop} className="icon icon-pause" />
-              <span>{`  ${Math.floor(this.props.time / 60)}:${this.props.time % 60}`}</span>
-            </span>
-            <span className="description">`created {formatDistanceToNow(creationDate)} ago`</span>
-          </label>
-          <button
-            type="button"
-            className="icon icon-edit"
-            onClick={() => {
-              this.props.edit();
-            }}
-          />
-          <button
-            type="button"
-            className="icon icon-destroy"
-            onClick={() => {
-              this.props.destroy();
-            }}
-          />
-        </div>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            this.props.submitChange();
+  return (
+    <li id={ID} className={completedClassText}>
+      <div className="view">
+        {/* checked={false}  */}
+        <input
+          checked={done}
+          className="toggle"
+          type="checkbox"
+          onChange={() => {
+            toggleDone();
           }}
-        >
-          <input
-            type="text"
-            className="edit"
-            value={this.state.TaskName}
-            onChange={(e) => this.setState({ TaskName: e.target.value })}
-          />
-        </form>
-      </li>
-    );
-  }
+        />
+        <label>
+          <span className="title">{TaskName}</span>
+          <span className="description">
+            <button type="button" onClick={TimerStart} className="icon icon-play" />
+            <button type="button" onClick={TimerStop} className="icon icon-pause" />
+            <span>{`  ${Math.floor(props.time / 60)}:${props.time % 60}`}</span>
+          </span>
+          <span className="description">`created {formatDistanceToNow(creationDate)} ago`</span>
+        </label>
+        <button
+          type="button"
+          className="icon icon-edit"
+          onClick={() => {
+            edit();
+          }}
+        />
+        <button
+          type="button"
+          className="icon icon-destroy"
+          onClick={() => {
+            destroy();
+          }}
+        />
+      </div>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          submitChange();
+        }}
+      >
+        <input type="text" className="edit" value={TaskName} onChange={(e) => setTaskName(e.target.value)} />
+      </form>
+    </li>
+  );
 }
 export default Task;
