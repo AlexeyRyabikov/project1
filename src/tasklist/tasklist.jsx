@@ -1,7 +1,5 @@
 import { Component } from 'react';
-// import ReactDOM from 'react';
 import './tasklist.css';
-// import { id } from 'date-fns/locale';
 
 import Task from '../task/task';
 
@@ -25,7 +23,6 @@ class Tasklist extends Component {
     const { propers } = props;
     const mass = [];
     for (let i = 0; i < propers.length; i += 1) {
-      // this.props.propers.length
       if (propers[i].visible) {
         mass.push(
           <Task
@@ -56,7 +53,7 @@ class Tasklist extends Component {
             time={props.propers[i].time}
           />
         );
-      } // ()=>console.log('сработало')this.checked}
+      }
     }
     return <ul className="todo-list">{mass}</ul>;
   }

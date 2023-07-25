@@ -1,34 +1,46 @@
 import { Component } from 'react';
 // import ReactDOM from 'react';
 import './task.css';
-import { formatDistanceToNow, format, parse } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns';
 
 class Task extends Component {
   constructor() {
     super();
-    this.state = { TaskName: '' }; // timerID: null,
+    this.state = { TaskName: '', className: '' }; // timerID: null,
     let timer;
+    const classN = '';
   }
 
   componentDidMount() {
     const { description } = this.props.props;
-    this.setState({ TaskName: description });
+    this.setState({ TaskName: description, className: this.props.props.className });
+  }
+
+  getSnapshotBeforeUpdate(prevProps, prevState) {
+    return prevProps.props.className;
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevProps.props.className !== this.classN) {
+      if (this.state.TaskName !== this.props.props.description) {
+        this.setState({ TaskName: this.props.props.description });
+      }
+    }
+    this.classN = prevProps.props.className;
   }
 
   render() {
-    const { className, done, ID, description, creationDate } = this.props.props;
     let completedClassText;
-    if (done) {
-      completedClassText = `${className} completed`;
+    if (this.props.props.done) {
+      completedClassText = `${this.props.props.className} completed`;
     } else {
-      completedClassText = className;
+      completedClassText = this.props.props.className;
     }
     return (
-      <li id={ID} className={completedClassText}>
+      <li id={this.props.props.ID} className={completedClassText}>
         <div className="view">
-          {/* checked={false}  */}
           <input
-            checked={done}
+            checked={this.props.props.done}
             className="toggle"
             type="checkbox"
             onChange={() => {
@@ -38,19 +50,18 @@ class Task extends Component {
           <label>
             <span className="title">{this.state.TaskName}</span>
             <span className="description">
-              {/* this.TimerStart.bind(this) */}
-              {/* onClick={this.TimerStop.bind(this)} */}
               <button type="button" onClick={this.props.TimerStart} className="icon icon-play" />
               <button type="button" onClick={this.props.TimerStop} className="icon icon-pause" />
-              <span>{`  ${Math.floor(this.props.time / 60)}:${this.props.time % 60}`}</span>
+              <span>{` ${Math.floor(this.props.time / 60)}:${this.props.time % 60}`}</span>
             </span>
-            <span className="description">`created {formatDistanceToNow(creationDate)} ago`</span>
+            <span className="description">`created {formatDistanceToNow(this.props.props.creationDate)} ago`</span>
           </label>
           <button
             type="button"
             className="icon icon-edit"
             onClick={() => {
               this.props.edit();
+              this.setState(({ className }) => ({ className: this.props.props.className }));
             }}
           />
           <button
@@ -64,11 +75,13 @@ class Task extends Component {
         <form
           onSubmit={(e) => {
             e.preventDefault();
+            this.props.props.description = this.state.TaskName;
             this.props.submitChange();
           }}
         >
           <input
             type="text"
+            name="inputeditTask"
             className="edit"
             value={this.state.TaskName}
             onChange={(e) => this.setState({ TaskName: e.target.value })}

@@ -1,5 +1,4 @@
 import React from 'react';
-// import ReactDOM from 'react-dom/client';
 
 import Tasklist from '../tasklist/tasklist';
 
@@ -11,6 +10,14 @@ const IDobj = {
   },
 };
 function createItem(descr, done = false, min = 0, sec = 0) {
+  if (min < 0) {
+    min = 0;
+  }
+  if (sec < 0) {
+    sec = 0;
+  }
+  min = Math.round(min);
+  sec = Math.round(sec);
   const objlist = {
     time: min * 60 + Number(sec),
     className: '',
@@ -38,17 +45,17 @@ class Finalcode extends React.Component {
     document.addEventListener('click', (e) => {
       let mousedInput = false;
       if (e.target.name) {
-        if (e.target.name.includes('input')) {
+        if (e.target.name.includes('inputeditTask')) {
           mousedInput = true;
         }
       }
-      if (!mousedInput) {
-        this.setState(() => ({ textInput: '', minutes: '', seconds: '' }));
+      if (!mousedInput && !e.target.className.includes('icon-edit')) {
+        this.escapeInputWithoutSave();
       }
     });
     document.addEventListener('keydown', (e) => {
       if (e.code === 'Escape') {
-        this.setState(() => ({ textInput: '', minutes: '', seconds: '' }));
+        this.escapeInputWithoutSave();
       }
     });
   }
@@ -67,24 +74,7 @@ class Finalcode extends React.Component {
       return { listOfItems: fuck };
     });
   };
-  // TimerStart() {
-  //   if (this.state.timerID == null) {
-  //     this.state.timerID = setInterval(() => {
-  //       if (this.state.timerTime > 0) {
-  //         this.setState(({ timerTime }) => {
-  //           return { timerTime: timerTime - 1 };
-  //         });
-  //       } else {
-  //         clearInterval(this.state.timerID);
-  //       }
-  //     }, 1000);
-  //   }
-  // }
 
-  // TimerStop() {
-  //   clearInterval(this.state.timerID);
-  //   this.setState(() => ({ timerID: null }));
-  // }
   deleteDone = () => {
     this.setState(({ listOfItems }) => {
       const fuck = listOfItems.filter((item) => !item.done);
@@ -121,7 +111,6 @@ class Finalcode extends React.Component {
     if (this.state.textInput) {
       this.setState(({ textInput, listOfItems, minutes, seconds }) => {
         const needArr = [...listOfItems.slice(0), createItem(textInput, false, minutes, seconds)]; // false, minutes, seconds
-        // console.log(needArr)
         return { listOfItems: needArr };
       });
       this.setState(() => ({ textInput: '', minutes: '', seconds: '' }));
@@ -151,6 +140,17 @@ class Finalcode extends React.Component {
 
   countItemsDone = () => this.state.listOfItems.filter((it) => !it.done).length;
 
+  escapeInputWithoutSave() {
+    for (let i = 0; i < this.state.listOfItems.length; i += 1) {
+      if (this.state.listOfItems[i].className.includes('editing')) {
+        this.setState(({ listOfItems }) => {
+          listOfItems[i].className = listOfItems[i].className.replace('editing', '');
+          return listOfItems;
+        });
+      }
+    }
+  }
+
   TimerStart(i) {
     if (this.state.listOfItems[i].timerID == null) {
       this.state.listOfItems[i].timerID = setInterval(() => {
@@ -166,11 +166,6 @@ class Finalcode extends React.Component {
     }
   }
 
-  // keyDown(e) {
-  //   console.log(this.state.seconds);
-  //   console.log(e.relatedtarget);
-  // }
-
   TimerStop(i) {
     clearInterval(this.state.listOfItems[i].timerID);
     this.setState(({ listOfItems }) => {
@@ -179,9 +174,6 @@ class Finalcode extends React.Component {
   }
 
   render() {
-    // (e)=>{this.setState(({listOfItems})=>{e.preventDefault()
-    // const newList=[...(listOfItems.slice(0)),createItem('fdsfsd')]
-    // return {listOfItems:newList}})}
     const { state } = this;
     const { listOfItems } = state;
     return (
@@ -217,9 +209,16 @@ class Finalcode extends React.Component {
         </header>
         <section className="main">
           <Tasklist
-            edit={(i) => this.setState(({ listOfItems }) => (listOfItems[i].className = 'editing'))}
+            edit={(i) => {
+              this.setState(({ listOfItems }) => {
+                const newList = listOfItems.slice(0);
+                newList[i].className = 'editing';
+                return newList;
+              });
+            }}
             destroy={(i) => {
               this.setState(({ listOfItems }) => {
+                clearInterval(listOfItems[i].timerID);
                 const newList = [...listOfItems.slice(0, i), ...listOfItems.slice(i + 1)];
                 return { listOfItems: newList };
               });
@@ -250,7 +249,6 @@ class Finalcode extends React.Component {
             <span className="todo-count">{this.countItemsDone()} items left</span>
             <ul className="filters">
               <li>
-                {/* <button onclick={this.selectAll} class="selected">All</button> */}
                 <button type="button" onClick={this.selectAll}>
                   All
                 </button>
@@ -275,6 +273,4 @@ class Finalcode extends React.Component {
     );
   }
 }
-// let root=ReactDOM.createRoot(document.getElementById('root'))
-// root.render(<Finalcode/>)
 export default Finalcode;
