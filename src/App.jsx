@@ -1,6 +1,6 @@
-import Finalcode from './app-wraper/app-wraper';
+import AppWraper from './app-wraper/app-wraper';
 
 function App() {
-  return <Finalcode />;
+  return <AppWraper />;
 }
 export default App;

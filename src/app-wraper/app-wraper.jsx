@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-// import ReactDOM from 'react-dom/client';
 
 import Tasklist from '../tasklist/tasklist';
 
@@ -11,7 +10,7 @@ const IDobj = {
   },
 };
 function createItem(descr, done = false, min = 0, sec = 0) {
-  const objlist = {
+  return {
     time: min * 60 + Number(sec),
     className: '',
     description: descr,
@@ -21,28 +20,27 @@ function createItem(descr, done = false, min = 0, sec = 0) {
     creationDate: new Date(),
     timerID: null,
   };
-  return objlist;
 }
-const Finalcode = function () {
+const AppWraper = function () {
   const [listOfItems, setListOfItems] = useState([createItem('task1'), createItem('task2'), createItem('task3')]);
   const [textInput, setTextInput] = useState('');
   const [minutes, setMinutes] = useState('');
   const [seconds, setSeconds] = useState('');
-  // constructor() {
-  //   super();
-  //   this.state = {
-  //     listOfItems: [createItem('task1'), createItem('task2'), createItem('task3')],
-  //     textInput: '',
-  //     minutes: '',
-  //     seconds: '',
-  //   };
-  // }
-
+  const escapeInputWithoutSave = () => {
+    setListOfItems((listOfItems) => {
+      for (let i = 0; i < listOfItems.length; i += 1) {
+        if (listOfItems[i].className.includes('editing')) {
+          listOfItems[i].className = listOfItems[i].className.replace('editing', '');
+        }
+      }
+      return [...listOfItems];
+    });
+  };
   useEffect(() => {
     document.addEventListener('click', (e) => {
       let mousedInput = false;
       if (e.target.name) {
-        if (e.target.name.includes('input')) {
+        if (e.target.name.includes('input') || e.target.name.includes('editButton')) {
           mousedInput = true;
         }
       }
@@ -50,6 +48,7 @@ const Finalcode = function () {
         setTextInput('');
         setMinutes('');
         setSeconds('');
+        escapeInputWithoutSave();
       }
     });
     document.addEventListener('keydown', (e) => {
@@ -57,6 +56,7 @@ const Finalcode = function () {
         setTextInput('');
         setMinutes('');
         setSeconds('');
+        escapeInputWithoutSave();
       }
     });
   }, []);
@@ -64,7 +64,7 @@ const Finalcode = function () {
   const selectDone = (e) => {
     e.preventDefault();
     setListOfItems((listOfItems) => {
-      const fuck = listOfItems.map((item) => {
+      const newList = listOfItems.map((item) => {
         if (!item.done) {
           item.visible = true;
         } else {
@@ -72,31 +72,19 @@ const Finalcode = function () {
         }
         return item;
       });
-      return fuck;
+      return newList;
     });
-
-    // this.setState(({ listOfItems }) => {
-    //   const fuck = listOfItems.map((item) => {
-    //     if (!item.done) {
-    //       item.visible = true;
-    //     } else {
-    //       item.visible = false;
-    //     }
-    //     return item;
-    //   });
-    //   return { listOfItems: fuck };
-    // });
   };
   const deleteDone = () => {
     setListOfItems((listOfItems) => {
-      const fuck = listOfItems.filter((item) => !item.done);
-      return fuck;
+      const newList = listOfItems.filter((item) => !item.done);
+      return newList;
     });
   };
 
   const selectActive = () => {
     setListOfItems((listOfItems) => {
-      const fuck = listOfItems.map((item) => {
+      const newList = listOfItems.map((item) => {
         if (item.done) {
           item.visible = true;
         } else {
@@ -104,17 +92,17 @@ const Finalcode = function () {
         }
         return item;
       });
-      return fuck;
+      return newList;
     });
   };
 
   const selectAll = () => {
     setListOfItems((listOfItems) => {
-      const fuck = listOfItems.map((item) => {
+      const newList = listOfItems.map((item) => {
         item.visible = true;
         return item;
       });
-      return fuck;
+      return newList;
     });
   };
 
@@ -135,14 +123,6 @@ const Finalcode = function () {
     setTextInput(e.target.value);
   };
 
-  // setMinutes = (e) => {
-  //   setMinutes(e.target.value);
-  // };
-
-  // setSeconds = (e) => {
-  //   setSeconds(e.target.value);
-  // };
-
   const countItemsDone = () => listOfItems.filter((it) => !it.done).length;
 
   const TimerStart = (i) => {
@@ -152,7 +132,7 @@ const Finalcode = function () {
           if (listOfItems[i].time > 0) {
             setListOfItems((listOfItems) => {
               listOfItems[i].time -= 1;
-              return listOfItems;
+              return [...listOfItems];
             });
           }
         }, 1000);
@@ -160,23 +140,6 @@ const Finalcode = function () {
       });
     }
   };
-  // if (this.state.listOfItems[i].timerID == null) {
-  //   this.state.listOfItems[i].timerID = setInterval(() => {
-  //     if (this.state.listOfItems[i].time > 0) {
-  //       this.setState(({ listOfItems }) => {
-  //         listOfItems[i].time -= 1;
-  //         return { listOfItems };
-  //       });
-  //     } else {
-  //       clearInterval(this.state.listOfItems[i].timerID);
-  //     }
-  //   }, 1000);
-
-  // keyDown(e) {
-  //   console.log(this.state.seconds);
-  //   console.log(e.relatedtarget);
-  // }
-
   const TimerStop = (i) => {
     clearInterval(listOfItems[i].timerID);
     setListOfItems((listOfItems) => {
@@ -184,9 +147,6 @@ const Finalcode = function () {
       return listOfItems;
     });
   };
-  // (e)=>{this.setState(({listOfItems})=>{e.preventDefault()
-  // const newList=[...(listOfItems.slice(0)),createItem('fdsfsd')]
-  // return {listOfItems:newList}})}
   return (
     <section className="todoapp">
       <header className="header">
@@ -223,41 +183,35 @@ const Finalcode = function () {
           edit={(i) =>
             setListOfItems((listOfItems) => {
               listOfItems[i].className = 'editing';
-              return listOfItems;
+              return [...listOfItems];
             })
           }
           destroy={(i) => {
+            clearInterval(listOfItems[i].timerID);
             setListOfItems((listOfItems) => {
               const newList = [...listOfItems.slice(0, i), ...listOfItems.slice(i + 1)];
-              return { listOfItems: newList };
+              return newList;
             });
           }}
           toggleDone={(i) => {
             setListOfItems((listOfItems) => {
               listOfItems[i].done = !listOfItems[i].done;
-              return listOfItems;
+              return [...listOfItems];
             });
-            // this.setState(({ listOfItems }) => (listOfItems[i].done = !listOfItems[i].done));
           }}
-          propers={listOfItems}
+          listOfItems={listOfItems}
           setName={(e, i) => {
             setListOfItems((listOfItems) => {
               listOfItems[i].description = e.target.value;
-              return listOfItems;
+              return [...listOfItems];
             });
-            // this.setState(({ listOfItems }) => {
-            //   listOfItems[i].description = e.target.value;
-            // });
           }}
-          submitChange={(i) => {
+          submitChange={(i, newName) => {
             setListOfItems((listOfItems) => {
+              listOfItems[i].description = newName;
               listOfItems[i].className = '';
-              return listOfItems;
+              return [...listOfItems];
             });
-            // this.setState(({ listOfItems }) => {
-            //   listOfItems[i].className = '';
-            //   return listOfItems;
-            // });
           }}
           TimerStart={(i) => {
             TimerStart(i);
@@ -294,6 +248,4 @@ const Finalcode = function () {
     </section>
   );
 };
-// let root=ReactDOM.createRoot(document.getElementById('root'))
-// root.render(<Finalcode/>)
-export default Finalcode;
+export default AppWraper;

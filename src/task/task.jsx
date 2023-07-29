@@ -3,9 +3,14 @@ import { Component, useEffect, useState } from 'react';
 import './task.css';
 import { formatDistanceToNow, format, parse } from 'date-fns';
 
-function Task({ props, toggleDone, TimerStart, TimerStop, destroy, edit, submitChange }) {
-  const { className, done, ID, description, creationDate } = props;
+function Task({ ItemInfo, toggleDone, TimerStart, TimerStop, destroy, edit, submitChange }) {
+  const { className, done, ID, description, creationDate } = ItemInfo;
   const [TaskName, setTaskName] = useState(description);
+  useEffect(() => {
+    if (description !== TaskName) {
+      setTaskName(description);
+    }
+  }, [className]);
   let timer;
   let completedClassText;
   if (done) {
@@ -30,12 +35,13 @@ function Task({ props, toggleDone, TimerStart, TimerStop, destroy, edit, submitC
           <span className="description">
             <button type="button" onClick={TimerStart} className="icon icon-play" />
             <button type="button" onClick={TimerStop} className="icon icon-pause" />
-            <span>{`  ${Math.floor(props.time / 60)}:${props.time % 60}`}</span>
+            <span>{`  ${Math.floor(ItemInfo.time / 60)}:${ItemInfo.time % 60}`}</span>
           </span>
           <span className="description">`created {formatDistanceToNow(creationDate)} ago`</span>
         </label>
         <button
           type="button"
+          name="editButton"
           className="icon icon-edit"
           onClick={() => {
             edit();
@@ -52,10 +58,16 @@ function Task({ props, toggleDone, TimerStart, TimerStop, destroy, edit, submitC
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          submitChange();
+          submitChange(TaskName);
         }}
       >
-        <input type="text" className="edit" value={TaskName} onChange={(e) => setTaskName(e.target.value)} />
+        <input
+          name="inputNewName"
+          type="text"
+          className="edit"
+          value={TaskName}
+          onChange={(e) => setTaskName(e.target.value)}
+        />
       </form>
     </li>
   );

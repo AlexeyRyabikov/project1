@@ -1,19 +1,15 @@
-import { Component } from 'react';
-// import ReactDOM from 'react';
 import './tasklist.css';
-// import { id } from 'date-fns/locale';
-
 import Task from '../task/task';
 
 const Tasklist = function (props) {
-  const { propers } = props;
+  const { listOfItems } = props;
   const mass = [];
-  for (let i = 0; i < propers.length; i += 1) {
-    if (propers[i].visible) {
+  for (let i = 0; i < listOfItems.length; i += 1) {
+    if (listOfItems[i].visible) {
       mass.push(
         <Task
           id={props.ID}
-          props={props.propers[i]}
+          ItemInfo={props.listOfItems[i]}
           destroy={() => {
             props.destroy(i);
           }}
@@ -23,23 +19,23 @@ const Tasklist = function (props) {
           toggleDone={() => {
             props.toggleDone(i);
           }}
-          submitChange={() => {
-            props.submitChange(i);
+          submitChange={(newName) => {
+            props.submitChange(i, newName);
           }}
           setName={(e) => {
             props.setName(e, i);
           }}
-          key={props.propers[i].ID}
+          key={props.listOfItems[i].ID}
           TimerStart={() => {
             props.TimerStart(i);
           }}
           TimerStop={() => {
             props.TimerStop(i);
           }}
-          time={props.propers[i].time}
+          time={props.listOfItems[i].time}
         />
       );
-    } // ()=>console.log('сработало')this.checked}
+    }
   }
   return <ul className="todo-list">{mass}</ul>;
 };
